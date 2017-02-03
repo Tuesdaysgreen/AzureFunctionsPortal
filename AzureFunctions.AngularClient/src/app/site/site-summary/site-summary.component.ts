@@ -1,4 +1,4 @@
-import {Component, OnInit, EventEmitter, Input, Output} from '@angular/core';
+import {Component, Injector, OnInit, EventEmitter, Input, Output} from '@angular/core';
 import {Observable, Subject, Subscription as RxSubscription} from 'rxjs/Rx';
 import {CacheService} from '../../shared/services/cache.service';
 import {RBACService} from '../../shared/services/rbac.service';
@@ -14,10 +14,15 @@ import {ArmObj} from '../../shared/models/arm/arm-obj';
     selector: 'site-summary',
     templateUrl: './site-summary.component.html',
     styleUrls: ['../site-dashboard/site-dashboard.component.scss'],
-    inputs: ['siteInput']
+    inputs: ['siteInput', 'foo']
 })
 
 export class SiteSummaryComponent {
+
+    public showNum = 0;
+    public showNumStream = new Subject<number>();
+    
+  
 
     public subscription : string;
     public resourceGroup : string;
@@ -34,7 +39,13 @@ export class SiteSummaryComponent {
 
     private _siteSubject : Subject<ArmObj<Site>>;
 
-    constructor(cacheService : CacheService, rbacService : RBACService) {
+    constructor(cacheService : CacheService, rbacService : RBACService, private injector: Injector) {
+        this.showNumStream = this.injector.get('showNumStream');
+
+        this.showNumStream.subscribe(num =>{
+            this.showNum = num;
+        })
+
         this._siteSubject = new Subject<ArmObj<Site>>();
         this._siteSubject
             .distinctUntilChanged()

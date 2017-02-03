@@ -7,7 +7,9 @@
 
         <breadcrumbs [viewInfoInput]="viewInfo"></breadcrumbs>
 
-        <site-dashboard [viewInfoInput]="viewInfo" *ngIf="dashboardType === 'app'"></site-dashboard>
+        <site-dashboard *ngIf="dashboardType === 'app'"></site-dashboard>
+
+        <!--<site-dashboard [viewInfoInput]="viewInfo" *ngIf="dashboardType === 'app'"></site-dashboard>-->
         <function-edit [viewInfoInput]="viewInfo" *ngIf="dashboardType === 'function'"></function-edit>
         <function-new [viewInfoInput]="viewInfo" [action]="action" *ngIf="dashboardType === 'createFunction'"></function-new>
 

@@ -1,6 +1,7 @@
+import { SiteSummaryComponent } from './../site-summary/site-summary.component';
 import {Component, OnInit, EventEmitter, Input, ViewChild} from '@angular/core';
-import {Observable, Subject} from 'rxjs/Rx';
-import {TabsComponent} from '../../tabs/tabs.component';
+import {Observable, ReplaySubject} from 'rxjs/Rx';
+// import {TabsComponent} from '../../tabs/tabs.component';
 import {TabComponent} from '../../tab/tab.component';
 import {SiteTabNames} from '../../shared/models/constants';
 import {CacheService} from '../../shared/services/cache.service';
@@ -12,58 +13,93 @@ import {ArmObj} from '../../shared/models/arm/arm-obj';
 import {Site} from '../../shared/models/arm/site';
 
 @Component({
-    selector: 'site-dashboard',
-    templateUrl: './site-dashboard.component.html',
-    styleUrls: ['./site-dashboard.component.scss'],
-    inputs: ['viewInfoInput']
+  selector: 'site-dashboard',
+  template: `
+  <h2>Hello {{name}}</h2>
+  <my-tabs [tabDatas]="tabDatas"></my-tabs>
+`
 })
-
 export class SiteDashboardComponent {
-    public selectedTabTitle: string = SiteTabNames.summary;
-    public site : ArmObj<Site>;
-    private _viewInfo : Subject<TreeViewInfo>;
-    @ViewChild(TabsComponent) tabs : TabsComponent;
+  // The list of components to create tabs from
+  // types = [SiteSummaryComponent];
 
-    public TabNames = SiteTabNames;
+  tabDatas = [];
 
-    public activeComponent = "";
 
-    constructor(
-        private _cacheService : CacheService,
-        private _globalStateService : GlobalStateService
-     ) {
-        this._viewInfo = new Subject<TreeViewInfo>();
-        this._viewInfo
-            .distinctUntilChanged()
-            .switchMap(viewInfo =>{
-                this._globalStateService.setBusyState();
-                return this._cacheService.getArmResource(viewInfo.resourceId);
-            })
-            .subscribe((site : ArmObj<Site>) =>{
-                this._globalStateService.clearBusyState();
-                this.site = site;
-            })
+    constructor(){
+      let numStream = new ReplaySubject<number>(1);
+      this.tabDatas = [{
+        component: SiteSummaryComponent,
+        inputs: {
+          showNumStream: numStream
+        }
+      }]
+
+      numStream.next(90);
+
     }
 
-    set viewInfoInput(viewInfo : TreeViewInfo){
-        this._viewInfo.next(viewInfo);
-    }
-
-    onTabSelected(selectedTab: TabComponent) {
-        this.selectedTabTitle = selectedTab.title;
-    }
-
-    onTabClosed(closedTab: TabComponent){
-        // For now only support a single dynamic tab
-        this.activeComponent = "";
-    }
-
-    openTab(component : string){
-        this.activeComponent = component;
-        
-        setTimeout(() =>{
-            let tabs = this.tabs.tabs.toArray();
-            this.tabs.selectTab(tabs[tabs.length-1]);
-        }, 100);
-    }
+  // tabDatas = [{
+  //   component : SiteSummaryComponent,
+  //   inputs : {
+  //     foo : "bar"
+  //   }
+  // }]
 }
+
+// @Component({
+//     selector: 'site-dashboard',
+//     templateUrl: './site-dashboard.component.html',
+//     styleUrls: ['./site-dashboard.component.scss'],
+//     inputs: ['viewInfoInput']
+// })
+
+// export class SiteDashboardComponent {
+//     public selectedTabTitle: string = SiteTabNames.summary;
+//     public site : ArmObj<Site>;
+//     private _viewInfo : Subject<TreeViewInfo>;
+//     @ViewChild(TabsComponent) tabs : TabsComponent;
+
+//     public TabNames = SiteTabNames;
+
+//     public activeTab = "";
+
+//     constructor(
+//         private _cacheService : CacheService,
+//         private _globalStateService : GlobalStateService
+//      ) {
+//         this._viewInfo = new Subject<TreeViewInfo>();
+//         this._viewInfo
+//             .distinctUntilChanged()
+//             .switchMap(viewInfo =>{
+//                 this._globalStateService.setBusyState();
+//                 return this._cacheService.getArmResource(viewInfo.resourceId);
+//             })
+//             .subscribe((site : ArmObj<Site>) =>{
+//                 this._globalStateService.clearBusyState();
+//                 this.site = site;
+//             })
+//     }
+
+//     set viewInfoInput(viewInfo : TreeViewInfo){
+//         this._viewInfo.next(viewInfo);
+//     }
+
+//     onTabSelected(selectedTab: TabComponent) {
+//         this.selectedTabTitle = selectedTab.title;
+//     }
+
+//     onTabClosed(closedTab: TabComponent){
+//         // For now only support a single dynamic tab
+//         this.activeTab = "";
+//     }
+
+//     openTab(component : string){
+//         this.activeTab = component;
+        
+//         setTimeout(() =>{
+//             let tabs = this.tabs.tabs.toArray();
+//             this.tabs.selectTab(tabs[tabs.length-1]);
+//         }, 100);
+//     }
+// }

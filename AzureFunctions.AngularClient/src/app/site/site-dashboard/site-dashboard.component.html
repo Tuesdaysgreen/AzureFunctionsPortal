@@ -13,7 +13,14 @@
     <tab [tabTitle]="TabNames.troubleshoot">
         Troubleshoot
     </tab>
-    <tab *ngIf="activeComponent === 'deployment-source'" [tabTitle]="TabNames.deploymentSource" [closeable]="true">
+    <tab *ngIf="activeTab === 'deployment-source'" [tabTitle]="TabNames.deploymentSource" [closeable]="true">
         <deployment-source *ngIf="selectedTabTitle === TabNames.deploymentSource" [siteInput]="site"></deployment-source>
     </tab>
+    <tab tabTitle="tab 1" [closeable]="true"></tab>
+    <tab tabTitle="tab 2" [closeable]="true"></tab>
+    <tab tabTitle="tab 3" [closeable]="true"></tab>
+    <tab tabTitle="tab 4" [closeable]="true"></tab>
+    <tab tabTitle="tab 5" [closeable]="true"></tab>
+
+
 </tabs>
